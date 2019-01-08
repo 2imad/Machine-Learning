@@ -6,10 +6,10 @@ function onScoreUpdate(dropPosition, bounciness, size, bucketLabel) {
 }
 
 function runAnalysis() {
- const testSetSize = 80;
- const [testSet, trainingSet ] = splitDataSet(outputs, testSetSize) 
+ const testSetSize = 20;
+ const [testSet, trainingSet ] = splitDataSet(minMax(outputs,3),testSetSize) 
  
-_.range(1,15).forEach(k => {
+_.range(1,8).forEach(k => {
    const accuracy = _.chain(testSet)
    .filter(testPoint => knn(trainingSet, _.initial(testPoint), k ) === testPoint[3])
    .size()
@@ -50,4 +50,20 @@ function splitDataSet(data, testCount){
    const testSet = _.slice(shuffled,0,testCount)
    const trainingSet = _.slice(shuffled, testCount)
    return [testSet , trainingSet]
+}
+
+function minMax(data, featurCount){
+  const clonedData = _.cloneDeep(data);
+
+  for (let i = 0; i < featurCount ; i++) {
+    const column = clonedData.map(row => row[i])
+    
+    const min = _.min(column)
+    const max = _.max(column)
+
+    for (let j = 0 ; j < clonedData.length; j++ ){
+      clonedData[j][i] = (clonedData[j][i] - min) / (max - min)
+    }
+  }
+  return clonedData
 }
