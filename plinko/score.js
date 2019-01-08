@@ -1,21 +1,27 @@
 const outputs = [];
 
 function onScoreUpdate(dropPosition, bounciness, size, bucketLabel) {  
-  // Ran every time a balls drops into a bucket
+
   outputs.push([dropPosition,bounciness,size,bucketLabel])
 }
 
 function runAnalysis() {
- const testSetSize = 20;
- const [testSet, trainingSet ] = splitDataSet(minMax(outputs,3),testSetSize) 
+ const testSetSize = 100;
+ const k = 10
+
  
-_.range(1,8).forEach(k => {
+ _.range(0,3).forEach(feature => {
+   const data = _.map(outputs, row => [row[feature],_.last(row)]);
+   const [testSet, trainingSet ] = splitDataSet(minMax(data,1),testSetSize) 
    const accuracy = _.chain(testSet)
-   .filter(testPoint => knn(trainingSet, _.initial(testPoint), k ) === testPoint[3])
+   .filter(
+     testPoint => 
+         knn(trainingSet, _.initial(testPoint), k ) === _.last(testPoint)
+   )
    .size()
    .divide(testSetSize)
    .value()
-   console.log(`For k: ${k} the accuracy is : ${accuracy} `)
+   console.log(`For feature: ${feature} the accuracy is : ${accuracy} `)
   })
 }
 
