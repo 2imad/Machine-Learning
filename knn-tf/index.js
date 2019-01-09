@@ -3,10 +3,14 @@ const tf = require('@tensorflow/tfjs')
 const loadCSV = require('./load-csv')
 const dataFile = 'kc_house_data.csv'
 
-
 function knn(features, labels , predctionPoint , k){
-  return features
-    .sub(predctionPoint)
+  const { mean, variance } = tf.moments(features, 0);
+ 
+  const scaledPrediction = predctionPoint.sub(mean).div(variance.pow(.5))
+   return features
+    .sub(mean)
+    .div(variance.pow(.5))
+    .sub(scaledPrediction)
     .pow(2)
     .sum(1)
     .pow(0.5)
@@ -20,12 +24,14 @@ function knn(features, labels , predctionPoint , k){
 let { features, labels, testFeatures, testLabels } = loadCSV(dataFile,{
     shuffle : true,
     splitTest: 10,
-    dataColumns : ['lat','long'],
+    dataColumns : ['lat','long','sqft_lot','sqft_living'],
     labelColumns: ['price']
 })
-
 features = tf.tensor(features)
 labels = tf.tensor(labels)
 
-const result = knn(features, labels, tf.tensor(testFeatures[0]), 10)
-console.log("Guess ", result , testLabels[0][0])
+testFeatures.forEach((testPoint, i) =>{
+    const result = knn(features, labels, tf.tensor(testPoint), 10)
+    const err =( testLabels[i][0] - result ) / testLabels[i][0]
+    console.log("Analysis off by",err*100,"%")
+})
