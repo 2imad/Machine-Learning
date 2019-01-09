@@ -17,14 +17,15 @@ function knn(features, labels , predctionPoint , k){
     .slice(0,k)
     .reduce((acc, pair) => acc + pair.get(1), 0) / k
 }
-
-
-
 let { features, labels, testFeatures, testLabels } = loadCSV(dataFile,{
     shuffle : true,
     splitTest: 10,
     dataColumns : ['lat','long'],
     labelColumns: ['price']
 })
-console.log(testLabels)
-console.log()
+
+features = tf.tensor(features)
+labels = tf.tensor(labels)
+
+const result = knn(features, labels, tf.tensor(testFeatures[0]), 10)
+console.log("Guess ", result , testLabels[0][0])
