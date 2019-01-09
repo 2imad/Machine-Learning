@@ -4,13 +4,10 @@ const shuffleSeed = require('shuffle-seed');
 
 function extractColumns(data, columnNames) {
   const headers = _.first(data);
-
   const indexes = _.map(columnNames, column => headers.indexOf(column));
   const extracted = _.map(data, row => _.pullAt(row, indexes));
-
   return extracted;
 }
-
 module.exports = function loadCSV(
   filename,
   {
@@ -40,13 +37,10 @@ module.exports = function loadCSV(
       return _.isNaN(result) ? element : result;
     });
   });
-
   let labels = extractColumns(data, labelColumns);
   data = extractColumns(data, dataColumns);
-
   data.shift();
   labels.shift();
-
   if (shuffle) {
     data = shuffleSeed.shuffle(data, 'phrase');
     labels = shuffleSeed.shuffle(labels, 'phrase');

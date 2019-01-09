@@ -1,15 +1,11 @@
 const outputs = [];
 
 function onScoreUpdate(dropPosition, bounciness, size, bucketLabel) {  
-
   outputs.push([dropPosition,bounciness,size,bucketLabel])
 }
-
 function runAnalysis() {
  const testSetSize = 100;
  const k = 10
-
- 
  _.range(0,3).forEach(feature => {
    const data = _.map(outputs, row => [row[feature],_.last(row)]);
    const [testSet, trainingSet ] = splitDataSet(minMax(data,1),testSetSize) 
@@ -24,12 +20,11 @@ function runAnalysis() {
    console.log(`For feature: ${feature} the accuracy is : ${accuracy} `)
   })
 }
-
 function knn(data, point,k){
    return  _.chain(data)
    .map(row => {
     return [
-      distance(_.initial(row),point), _.last(row)
+       distance(_.initial(row),point), _.last(row)
      ]
     })
    .sortBy(row => row[0])
