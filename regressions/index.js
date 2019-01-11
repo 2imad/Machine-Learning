@@ -12,11 +12,11 @@ let {features, labels, testFeatures, testLabels  } = loadCSV(CSVFile,{
     labelColumns:['mpg']   
 })
 
-const regression = new LinearRegression(features, labels,{
-    iterations : 100,
-    learningRate : 0.0001
+const regression = new LinearRegression(features, labels, {
+    learningRate : 0.0001,
+    iterations : 100
   })
-  regression.train()
+  regression.train() 
+  const R2 =  regression.test(testFeatures, testLabels)
+  console.log("R2 is " , R2)
 
-
-console.log("Updated m is :" + regression.weights.get(1,0), "Updated b is :" + regression.weights.get(0,0))

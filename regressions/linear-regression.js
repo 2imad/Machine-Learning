@@ -3,9 +3,8 @@ const _ = require("lodash")
 
 class LinearRegression {
     constructor(features , labels, options){
-        this.features = tf.tensor(features);
+        this.features = this.processFeatures(features);
         this.labels = tf.tensor(labels);
-        this.features = tf.ones([this.features.shape[0],1]).concat(this.features,1)
         this.options = Object.assign({learningRate : 0.1, iterations: 1000 }, options) 
         this.weights = tf.zeros([2,1]);
     }
@@ -20,8 +19,6 @@ class LinearRegression {
         .div(this.features.shape[0])
         this.weights = this.weights.sub(slopes.mul(this.options.learningRate)) 
     }   
-
-    
     /*
     Gradient descent calculating b , m separately
     gradientDescent(){
@@ -38,11 +35,48 @@ class LinearRegression {
         this.b = this.b - bSlope * this.options.learningRate
     }
     */
-
     train(){
         for(let i = 0; i < this.options.iterations; i++){
             this.gradientDescent()
         }
+    }
+    
+    test(testFeatures, testLabels){
+        // convert the array of arrays to tensors 
+        testFeatures = this.processFeatures(testFeatures)
+        testLabels = tf.tensor(testLabels)
+        // apply the matrix multiplication 
+        const predictions = testFeatures.matMul(this.weights)
+        // Coefficient of determination
+        const res =  testLabels.sub(predictions)
+        .pow(2)
+        .sum() // sums all the values in the tensor and returns a tensor with a single summed value
+        .get() // returns the summed value returned by the calculation
+        const tot = testLabels.sub(testLabels.mean())
+        .pow(2)
+        .sum()
+        .get()
+        return 1 - res / tot 
+    }
+    
+    processFeatures(features){
+        features = tf.tensor(features)
+        
+        if(this.mean && this.variance){
+            features = features.sub(this.mean).div(this.variance.pow(0.5))
+        } else {
+            this.standardize(features)
+        }
+        
+        features = tf.ones([features.shape[0],1]).concat(features,1)
+        return features;
+    }
+    
+    standardize(features){
+        const { mean , variance  } = tf.moments(features, 0)
+        this.mean = mean
+        this.variance = variance
+        return features.sub(mean).div(variance.pow(0.5))
     }
 }
 
