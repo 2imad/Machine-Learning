@@ -11,12 +11,12 @@ function knn(features, labels , predctionPoint , k){
     .sub(mean)
     .div(variance.pow(.5))
     .sub(scaledPrediction)
-    .pow(2)
-    .sum(1)
-    .pow(0.5)
-    .expandDims(1)
-    .concat(labels,1)
-    .unstack()
+    .pow(2) // to the power of 2 
+    .sum(1) // sum along the X axis 
+    .pow(0.5) // Square root 
+    .expandDims(1) // expand dimenstions along the X axis
+    .concat(labels,1) // concat along the X axis 
+    .unstack() // unfold the tensors to vanilla arrays 
     .sort((a,b) => a.get(0) > b.get(0) ? 1 : -1)
     .slice(0,k)
     .reduce((acc, pair) => acc + pair.get(1), 0) / k
