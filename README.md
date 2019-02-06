@@ -5,6 +5,7 @@
     - Linear Regression
     - Matrix Multiplication
     - Gradient Descent 
+    - Coefficient of determination
 
 
 

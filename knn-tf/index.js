@@ -5,7 +5,7 @@ const dataFile = 'kc_house_data.csv'
 
 function knn(features, labels , predctionPoint , k){
   const { mean, variance } = tf.moments(features, 0);
- 
+ // mean returns the average
   const scaledPrediction = predctionPoint.sub(mean).div(variance.pow(.5))
    return features
     .sub(mean)
